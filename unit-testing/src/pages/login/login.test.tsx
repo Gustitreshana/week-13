@@ -1,37 +1,20 @@
-import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react"
-import LoginPage from "."
+import { render, fireEvent, waitFor } from '@testing-library/react';
+import LoginPage from '.';
 
-describe("login form", () => {
-    const mockSubmit = jest.fn();
+describe('LoginPage', () => {
+  it('submits the form', async () => {
+    const mockOnSubmit = jest.fn();
+    const { getByLabelText, getByText } = render(<LoginPage onSubmit={mockOnSubmit} />);
 
-    test("render form correctly", () => {
-        render(<LoginPage onSubmit={mockSubmit} />)
-        const title = screen.getByText("Do you already have an account?");
-        expect(title).toBeDefined();
+    fireEvent.change(getByLabelText('Email'), { target: { value: 'test@email.com' } });
+    fireEvent.change(getByLabelText('Password'), { target: { value: 'Test@1234' } });
+    fireEvent.click(getByText('Login now!'));
 
-        const emailInput = screen.getByLabelText("Email");
-        expect(emailInput).toBeDefined();
+    await waitFor(() => expect(mockOnSubmit).toHaveBeenCalled());
 
-        const passInput = screen.getByLabelText("Password");
-        expect(passInput).toBeDefined();
-    })
-
-    test("Submit data from input value", async () => {
-        render(<LoginPage onSubmit={mockSubmit} />)
-        const emailInput = screen.getByLabelText("Email");
-        const passInput = screen.getByLabelText("Password");
-        const buttonLogin = screen.getByText("Login now!")
-
-        fireEvent.change(emailInput, { target: {value: "email@gmail.com"}});
-        fireEvent.change(passInput, { target: {value: "12345678"}});
-        fireEvent.click(buttonLogin);
-
-        await waitFor(() => expect(mockSubmit).toHaveBeenCalled());
-
-        expect(mockSubmit).toHaveBeenCalledWith({
-            email: "email@gmail.com",
-            password: "12345678"
-        })
-    })
-})
+    expect(mockOnSubmit).toHaveBeenCalledWith({
+      email: 'gusti@gmail.com',
+      password: 'Test1234',
+    });
+  });
+});

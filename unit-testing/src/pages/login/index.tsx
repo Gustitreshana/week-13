@@ -80,7 +80,11 @@ const LoginPage = ({ onSubmit }: Props) => {
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={handleSubmit}
+            onSubmit={(values, { setSubmitting }) => {
+              // Panggil prop onSubmit di sini
+              onSubmit(values);
+              setSubmitting(false);
+            }}
           >
             <Form>
               <div className="mb-4">
